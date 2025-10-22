@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DKV HACK 07</title>
+<style>
+  /* Paper-like white background */
+  body{
+    margin:0;
+    padding:0;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: #ffffff;
+    /* subtle paper texture: faint horizontal lines + soft noise */
+    background-image:
+      repeating-linear-gradient( to bottom, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 24px ),
+      radial-gradient(circle at 10% 10%, rgba(0,0,0,0.015), transparent 20%),
+      radial-gradient(circle at 80% 70%, rgba(0,0,0,0.01), transparent 20%);
+    background-size: 100% 24px, auto, auto;
+    color: #111827;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* Card */
+  .card{
+    width:94%;
+    max-width:520px;
+    background: #ffffff;
+    border-radius:14px;
+    padding:26px;
+    box-shadow: 0 10px 30px rgba(17,24,39,0.08);
+    border: 1px solid rgba(17,24,39,0.04);
+  }
+
+  h1{
+    margin:0 0 10px;
+    font-size:22px;
+    color:#0b5cff;
+    text-align:center;
+  }
+
+  .muted { color:#6b7280; font-size:13px; margin-bottom:10px; text-align:left; }
+  label{ display:block; text-align:left; color:#111827; margin:8px 0 6px; font-size:14px; }
+  input[type="text"], input[type="number"], select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #e5e7eb;
+    background:#fff;
+    font-size:15px;
+    color:#111827;
+    box-sizing:border-box;
+  }
+
+  .row{ display:flex; gap:8px; align-items:center; }
+  .btn{
+    display:inline-block;
+    padding:10px 16px;
+    background:#0b5cff;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn.secondary{
+    background:#f3f4f6;
+    color:#111827;
+    border:1px solid #e5e7eb;
+  }
+
+  .center{text-align:center}
+  .page{display:none}
+  .page.active{display:block}
+
+  .summary{
+    background:#f8fbff;
+    border:1px solid #e6f0ff;
+    padding:12px;
+    border-radius:8px;
+    text-align:left;
+    color:#111827;
+  }
+
+  .note{ font-size:13px; color:#6b7280; margin-top:8px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔰 DKV HACK 07</h1>
+
+    <!-- PAGE 1 -->
+    <div id="page1" class="page active">
+      <div class="muted">कृपया अपना Instagram username दर्ज करें</div>
+      <label>Instagram Username</label>
+      <input id="instaUser" type="text" placeholder="उदाहरण: username_here" autocomplete="off" />
+      <div class="note">यहाँ केवल username डालें — किसी भी प्रकार का password या संवेदनशील जानकारी न डालें।</div>
+      <div style="margin-top:14px;" class="center">
+        <button class="btn" onclick="gotoFollowers()">आगे →</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div id="page2" class="page">
+      <div class="muted">कितने followers चाहिए?</div>
+      <label>Followers संख्या चुनें</label>
+      <select id="followersSelect">
+        <option value="100">100 Followers — ₹49</option>
+        <option value="500">500 Followers — ₹149</option>
+        <option value="1000">1000 Followers — ₹279</option>
+        <option value="5000">5000 Followers — ₹1199</option>
+        <option value="custom">Custom संख्या</option>
+      </select>
+
+      <div id="customBlock" style="display:none;margin-top:8px">
+        <label>Custom Followers (संख्या)</label>
+        <input id="customFollowers" type="number" placeholder="उदाहरण: 250" min="50" />
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="btn secondary" onclick="backToUser()">← वापस</button>
+        <button class="btn" onclick="showSummary()">जारी रखें →</button>
+      </div>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div id="page3" class="page">
+      <div class="muted">Order संक्षेप (Summary)</div>
+      <div class="summary" id="orderSummary" style="margin-top:10px"></div>
+
+      <div style="margin-top:12px" class="center">
+        <button class="btn" onclick="confirmOrder()">भुगतान के लिए आगे बढ़ें</button>
+      </div>
+      <div class="note">यह पेज केवल जानकारी के लिए है — वास्तविक भुगतान के लिए backend आवश्यक होगा।</div>
+    </div>
+
+  </div>
+
+<script>
+  // Page control
+  function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function gotoFollowers(){
+    const user = document.getElementById('instaUser').value.trim();
+    if(!user){ alert('कृपया Instagram username दर्ज करें।'); return; }
+    // store neutral keys (no personal-name words)
+    localStorage.setItem('insta_user', user);
+    showPage('page2');
+  }
+
+  document.getElementById('followersSelect').addEventListener('change', function(){
+    if(this.value === 'custom') document.getElementById('customBlock').style.display = 'block';
+    else document.getElementById('customBlock').style.display = 'none';
+  });
+
+  function backToUser(){ showPage('page1'); }
+
+  function showSummary(){
+    let sel = document.getElementById('followersSelect').value;
+    let followers = sel === 'custom' ? document.getElementById('customFollowers').value : sel;
+    if(!followers || parseInt(followers)<1){ alert('कृपया followers की सही संख्या दर्ज करें।'); return; }
+
+    const user = localStorage.getItem('insta_user') || '—';
+    // pricing (same logic)
+    let price = 0;
+    const n = parseInt(followers);
+    if(n<=150) price=49;
+    else if(n<=600) price=149;
+    else if(n<=1500) price=279;
+    else if(n<=6000) price=1199;
+    else price = Math.ceil(n/1000)*250;
+
+    const html = `
+      <div><strong>Username:</strong> ${escapeHtml(user)}</div>
+      <div style="margin-top:6px"><strong>Followers:</strong> ${escapeHtml(followers)}</div>
+      <div style="margin-top:6px"><strong>अनुमानित मूल्य (Estimated Price):</strong> ₹${price}</div>
+    `;
+    document.getElementById('orderSummary').innerHTML = html;
+    localStorage.setItem('followers_amount', followers);
+    localStorage.setItem('order_price', price);
+    showPage('page3');
+  }
+
+  function confirmOrder(){
+    const user = localStorage.getItem('insta_user');
+    const followers = localStorage.getItem('followers_amount');
+    const price = localStorage.getItem('order_price');
+    alert(`Order पुष्टि हुई!\nUsername: ${user}\nFollowers: ${followers}\nPrice: ₹${price}\n\nअगला कदम: भुगतान के लिए backend और payment integration आवश्यक है।`);
+    // यहाँ redirect या backend कॉल जोड़ना होगा जब payment जोड़ना चाहो
+  }
+
+  // helper to escape user input for safety
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+</script>
+</body>
+</html>
