@@ -1,64 +1,180 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DKV HACK 07</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Courier New", monospace;
-      background: radial-gradient(circle at center, #000 60%, #001f3f);
-      color: #00ff99;
-      text-align: center;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    h1 {
-      font-size: 2.8em;
-      letter-spacing: 3px;
-      text-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99;
-      animation: flicker 2s infinite;
-    }
-    @keyframes flicker {
-      0%, 18%, 22%, 25%, 53%, 57%, 100% {
-        opacity: 1;
-      }
-      20%, 24%, 55% {
-        opacity: 0.4;
-      }
-    }
-    .arrow {
-      position: absolute;
-      bottom: 40px;
-      font-size: 2em;
-      animation: bounce 1.2s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-    .logo {
-      font-size: 1.5em;
-      color: #00ff99;
-      letter-spacing: 2px;
-      margin-top: 15px;
-      text-shadow: 0 0 10px #00ff99;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DKV HACK 07 — Demo</title>
+<style>
+  /* background + theme (tera original look) */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Courier New", monospace;
+    background: radial-gradient(circle at center, #000 60%, #001f3f);
+    color: #00ff99;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* center card */
+  .card {
+    width: 92%;
+    max-width: 460px;
+    background: rgba(0,8,10,0.45);
+    border: 1px solid rgba(0,255,153,0.06);
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+
+  h1 { margin: 6px 0 12px; font-size: 20px; letter-spacing: 3px; text-shadow:0 0 10px #00ff99; }
+  label{display:block;text-align:left;color:#9fffc9;margin:10px 0 6px;font-size:14px}
+  input[type="text"], select, input[type="number"] {
+    width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,255,153,0.06);
+    background:rgba(0,10,12,0.25);color:#cffff0;font-size:15px;
+  }
+  .btn {
+    display:inline-block;margin-top:12px;padding:10px 14px;border-radius:10px;background:#00ff99;color:#001;font-weight:700;border:none;cursor:pointer;
+  }
+  .muted{color:#9bdac9;font-size:13px;margin-top:8px}
+  .center{text-align:center}
+  .small{font-size:13px;color:#b8f2d8;margin-top:8px}
+
+  /* page transitions */
+  .page{display:none}
+  .page.active{display:block}
+
+  /* summary box */
+  .summary{background:rgba(0,15,20,0.25);padding:12px;border-radius:8px;border:1px solid rgba(0,255,153,0.04);text-align:left}
+</style>
 </head>
 <body>
-  <h1>🔰 DKV HACK 07 🔰</h1>
-  <div class="logo">Powered by DKV</div>
-  <div class="arrow">⬇️</div>
+
+<div class="card">
+  <h1>🔰 DKV HACK 07 — Demo</h1>
+
+  <!-- PAGE 1: Instagram username -->
+  <div id="page1" class="page active">
+    <div class="muted">पहला कदम — अपना Instagram username डालें (demo के लिए)</div>
+    <label>Instagram Username</label>
+    <input id="instaUser" type="text" placeholder="उदाहरण: dkv_example" autocomplete="off" />
+    <div class="small">यह सिर्फ demo के लिए है — हम पासवर्ड न माँगते हैं और न ही असली अकाउंट से जुड़ते हैं।</div>
+    <div class="center">
+      <button class="btn" onclick="gotoFollowers()">Next →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2: Followers selection -->
+  <div id="page2" class="page">
+    <div class="muted">कितने followers चाहिए? (demo विकल्प)</div>
+
+    <label>Followers amount (choose)</label>
+    <select id="followersSelect">
+      <option value="100">100 Followers — ₹49</option>
+      <option value="500">500 Followers — ₹149</option>
+      <option value="1000">1000 Followers — ₹279</option>
+      <option value="5000">5000 Followers — ₹1199</option>
+      <option value="custom">Custom amount</option>
+    </select>
+
+    <div id="customBlock" style="display:none;margin-top:8px">
+      <label>Custom followers (number)</label>
+      <input id="customFollowers" type="number" placeholder="उदाहरण: 250" min="50" />
+    </div>
+
+    <div class="center">
+      <button class="btn" onclick="backToUser()">← Back</button>
+      <button class="btn" style="margin-left:8px" onclick="showSummary()">Continue</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3: Summary & fake checkout -->
+  <div id="page3" class="page">
+    <div class="muted">Order Summary</div>
+    <div class="summary" id="orderSummary" style="margin-top:10px">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="center">
+      <button class="btn" onclick="confirmOrder()">Proceed to Payment (Demo)</button>
+    </div>
+    <div class="small">Demo mode — real payment require backend integration.</div>
+  </div>
+</div>
+
+<script>
+  // show/hide pages
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function gotoFollowers(){
+    const user = document.getElementById('instaUser').value.trim();
+    if(!user){ alert('कृपया अपना Instagram username डालें।'); return; }
+    // save to localStorage (demo only)
+    localStorage.setItem('demo_insta_user', user);
+    showPage('page2');
+  }
+
+  // show custom input when selected
+  document.getElementById('followersSelect').addEventListener('change', function(){
+    if(this.value === 'custom') document.getElementById('customBlock').style.display = 'block';
+    else document.getElementById('customBlock').style.display = 'none';
+  });
+
+  function backToUser(){ showPage('page1'); }
+
+  function showSummary(){
+    let sel = document.getElementById('followersSelect').value;
+    let followers = sel === 'custom' ? document.getElementById('customFollowers').value : sel;
+    if(!followers || parseInt(followers) < 1){ alert('कृपया followers की सही मात्रा डालें।'); return; }
+
+    const user = localStorage.getItem('demo_insta_user') || '—';
+    // demo pricing logic (simple)
+    let price = 0;
+    const n = parseInt(followers);
+    if(n <= 150) price = 49;
+    else if(n <= 600) price = 149;
+    else if(n <= 1500) price = 279;
+    else if(n <= 6000) price = 1199;
+    else price = Math.ceil(n/1000)*250; // custom rate example
+
+    // fill summary
+    const html = `
+      <div><strong>Username:</strong> ${escapeHtml(user)}</div>
+      <div style="margin-top:6px"><strong>Followers:</strong> ${escapeHtml(followers)}</div>
+      <div style="margin-top:6px"><strong>Estimated Price:</strong> ₹${price}</div>
+      <div style="margin-top:6px;color:#9bdac9;font-size:13px">Note: यह सिर्फ Demo है — वास्तविक ऑर्डर के लिए backend और payment integration आवश्यक है।</div>
+    `;
+    document.getElementById('orderSummary').innerHTML = html;
+    // store for next step
+    localStorage.setItem('demo_followers', followers);
+    localStorage.setItem('demo_price', price);
+    showPage('page3');
+  }
+
+  function confirmOrder(){
+    // demo confirmation — in real app call backend to create order/payment
+    const user = localStorage.getItem('demo_insta_user');
+    const followers = localStorage.getItem('demo_followers');
+    const price = localStorage.getItem('demo_price');
+    alert('Demo: आपका order तैयार है।\\nUsername: '+user+'\\nFollowers: '+followers+'\\nPrice: ₹'+price+'\\n(यह केवल दिखावे के लिए है)');
+    // optional: redirect to a fake success page or show voucher
+    showFakeSuccess();
+  }
+
+  function showFakeSuccess(){
+    document.getElementById('orderSummary').innerHTML = '<div style="font-weight:700">धन्यवाद — Demo order confirmed</div><div style="margin-top:8px">Order ID: DEMO-'+Date.now()+'</div><div style="margin-top:8px">आपका प्रोफाइल: '+escapeHtml(localStorage.getItem('demo_insta_user'))+'</div>';
+    showPage('page3');
+  }
+
+  // small helper to avoid XSS in demo
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+</script>
 </body>
 </html>
